@@ -12,5 +12,4 @@ public class EmployeepayrollApplication {
 		SpringApplication.run(EmployeepayrollApplication.class, args);
 		log.info("Employee Payroll App Started");
 	}
-
 }
