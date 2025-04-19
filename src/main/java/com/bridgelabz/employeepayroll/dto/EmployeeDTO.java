@@ -1,9 +1,19 @@
 package com.bridgelabz.employeepayroll.dto;
 
-public class EmployeeDTO {
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import lombok.ToString;
 
-    private String name;
-    private double salary;
+import java.util.List;
+
+public @ToString class EmployeeDTO {
+    @NotEmpty(message = "Employee name cannot be null")
+    @Pattern(regexp = "^[A-Z]{1}[a-zA-Z\\s]{2,}$", message = "Employee name Invalid")
+    public String name;
+
+    @Min(value = 500, message = "Min wage should be more than 500")
+    public double salary;
 
     public EmployeeDTO() {}
 
@@ -26,7 +36,8 @@ public class EmployeeDTO {
         this.salary = salary;
     }
 
+    @Override
     public String toString() {
-        return "name: " + name + ", " + "salary: " + salary;
+        return "name = " + name + ", " + "salary = " + salary;
     }
 }

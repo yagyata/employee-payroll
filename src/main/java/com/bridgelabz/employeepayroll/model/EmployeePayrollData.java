@@ -5,14 +5,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Data;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Entity
-public class EmployeePayrollData {
+public @Data class EmployeePayrollData {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int employeeId;
     private String name;
     private double salary;
+
 
     public EmployeePayrollData() {}
 
@@ -24,32 +29,33 @@ public class EmployeePayrollData {
 
     public EmployeePayrollData(int employeeId, EmployeeDTO employeeDTO) {
         this.employeeId = employeeId;
-        this.name = employeeDTO.getName();
-        this.salary = employeeDTO.getSalary();
+        this.name = employeeDTO.name;
+        this.salary = employeeDTO.salary;
     }
 
-    public EmployeePayrollData(EmployeeDTO employeeDTO) {
-        this.name = employeeDTO.getName();
-        this.salary = employeeDTO.getSalary();
-    }
 
-    public int getEmployeeId() {
-        return employeeId;
-    }
-    public String getName() {
-        return name;
-    }
-    public double getSalary(){
-        return salary;
-    }
-
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setSalary(double salary) {
-        this.salary = salary;
-    }
+//    public EmployeePayrollData(EmployeeDTO employeeDTO) {
+//        this.name = employeeDTO.getName();
+//        this.salary = employeeDTO.getSalary();
+//    }
+//
+//    public int getEmployeeId() {
+//        return employeeId;
+//    }
+//    public String getName() {
+//        return name;
+//    }
+//    public double getSalary(){
+//        return salary;
+//    }
+//
+//    public void setEmployeeId(int employeeId) {
+//        this.employeeId = employeeId;
+//    }
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//    public void setSalary(double salary) {
+//        this.salary = salary;
+//    }
 }
