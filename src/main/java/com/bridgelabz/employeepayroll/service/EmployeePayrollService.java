@@ -27,7 +27,6 @@ public class EmployeePayrollService implements IEmployeePayrollService {
     public List<EmployeePayrollData> getEmployeePayrollData() {
         return employeeRepository.findAll();
 //        return employeePayrollList;
-//        return repository.findAll();
     }
 
     @Override

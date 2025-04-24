@@ -32,12 +32,12 @@ public @ToString class EmployeeDTO {
     @NotNull(message = "department should not be empty")
     public List<String> departments;
 
-    public EmployeeDTO() {}
-
-    public EmployeeDTO(String name, double salary) {
-        this.name = name;
-        this.salary = salary;
-    }
+//    public EmployeeDTO() {}
+//
+//    public EmployeeDTO(String name, double salary) {
+//        this.name = name;
+//        this.salary = salary;
+//    }
 
 //    public String getName() {
 //        return name;
