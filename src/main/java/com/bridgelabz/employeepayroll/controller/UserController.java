@@ -1,8 +1,6 @@
 package com.bridgelabz.employeepayroll.controller;
 
-import com.bridgelabz.employeepayroll.dto.AuthResponseDTO;
-import com.bridgelabz.employeepayroll.dto.LoginDTO;
-import com.bridgelabz.employeepayroll.dto.RegisterDTO;
+import com.bridgelabz.employeepayroll.dto.*;
 import com.bridgelabz.employeepayroll.service.UserInterface;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +32,18 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO<String, String>> login(@Valid @RequestBody LoginDTO loginDTO) {
         AuthResponseDTO<String, String> response = userInterface.loginUser(loginDTO);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<AuthResponseDTO<String,String>> forgotPassword(@Valid @RequestBody ForgotPasswordDTO forgotPasswordDTO) {
+        AuthResponseDTO<String, String> response = userInterface.forgotPassword(forgotPasswordDTO);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<AuthResponseDTO<String, String>> resetPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
+        AuthResponseDTO<String, String> response = userInterface.resetPassword(resetPasswordDTO);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

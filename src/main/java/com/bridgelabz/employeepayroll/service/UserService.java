@@ -1,8 +1,6 @@
 package com.bridgelabz.employeepayroll.service;
 
-import com.bridgelabz.employeepayroll.dto.LoginDTO;
-import com.bridgelabz.employeepayroll.dto.RegisterDTO;
-import com.bridgelabz.employeepayroll.dto.AuthResponseDTO;
+import com.bridgelabz.employeepayroll.dto.*;
 import com.bridgelabz.employeepayroll.model.User;
 import com.bridgelabz.employeepayroll.repository.UserRepository;
 import com.bridgelabz.employeepayroll.utility.JwtUtility;
@@ -10,8 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.*;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -27,6 +27,8 @@ public class UserService implements UserInterface{
 
     @Autowired
     JwtUtility jwtUtility;
+
+    private final Map<String, String> otpStore = new HashMap<>();
 
 
     /*
@@ -97,7 +99,7 @@ public class UserService implements UserInterface{
                 emailService.sendEmail(
                         user.getEmail(),
                         "Logged in Employee Payroll App",
-                        "Hi.." + "\nYou have been Successfully logged in!" + token
+                        "Hi.." + "\nYou have been Successfully logged in! " + token
                 );
 
                 //Set the success message and token in the response
@@ -119,6 +121,67 @@ public class UserService implements UserInterface{
         //Return the final response object
         return res;
     }
+
+
+    @Override
+    public AuthResponseDTO<String, String> forgotPassword(ForgotPasswordDTO forgotPasswordDTO) {
+        log.info("Forgot Password for user: {}", forgotPasswordDTO.getEmail());
+        AuthResponseDTO<String, String> res = new AuthResponseDTO<>();
+        Optional<User> userExists = getUserByEmail(forgotPasswordDTO.getEmail());
+
+        if (userExists.isPresent()) {
+            User user = userExists.get();
+            String otp = generateOtp();
+            otpStore.put(user.getEmail(), otp);
+
+            emailService.sendEmail(user.getEmail(),
+                    "OTP Verification",
+                    "OTP to reset your password.\nOTP: " + otp);
+
+            res.setMessage("OTP verification");
+            res.setMessageData("OTP sent to user");
+        } else {
+            log.warn("User not found with email: {}", forgotPasswordDTO.getEmail());
+            res.setMessage("error");
+            res.setMessageData("Invalid Credentials");
+        }
+        return res;
+    }
+
+    @Override
+    public AuthResponseDTO<String, String> resetPassword(ResetPasswordDTO resetPasswordDTO) {
+        log.info("Password reset request for email: {}", resetPasswordDTO.getEmail());
+        AuthResponseDTO<String, String> res = new AuthResponseDTO<>();
+
+        Optional<User> userExists = getUserByEmail(resetPasswordDTO.getEmail());
+
+        if (userExists.isPresent()) {
+            User user = userExists.get();
+            String storedOtp = otpStore.get(resetPasswordDTO.getEmail());
+
+            if (storedOtp == null || !storedOtp.equals(resetPasswordDTO.getOtp())) {
+                log.warn("Reset password failed: Invalid OTP");
+                res.setMessage("error");
+                res.setMessageData("Invalid OTP");
+                return res;
+            }
+
+            user.setPassword(passwordEncoder.encode(resetPasswordDTO.getNewPassword()));
+            userRepository.save(user);
+            otpStore.remove(resetPasswordDTO.getEmail()); // remove OTP after use
+
+            emailService.sendEmail(user.getEmail(), "Password Changed", "Your password has been changed successfully");
+            res.setMessage("message");
+            res.setMessageData("Password changed successfully");
+        } else {
+            log.warn("Reset password failed: User not found");
+            res.setMessage("error");
+            res.setMessageData("User not found");
+        }
+
+        return res;
+    }
+
 
     /*
     param:- rawPassword - Plain password input by user
@@ -149,5 +212,12 @@ public class UserService implements UserInterface{
     public Optional<User> getUserByEmail(String email) {
         log.debug("Fetching user by email: {}", email);
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public String generateOtp() {
+        Random random = new Random();
+        int otp = 100000 + random.nextInt(900000);
+        return String.valueOf(otp);
     }
 }
