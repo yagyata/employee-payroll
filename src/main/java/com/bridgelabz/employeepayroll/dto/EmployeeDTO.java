@@ -1,32 +1,60 @@
 package com.bridgelabz.employeepayroll.dto;
 
-public class EmployeeDTO {
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.*;
+import lombok.ToString;
 
-    private String name;
-    private double salary;
+import java.time.LocalDate;
+import java.util.List;
 
-    public EmployeeDTO() {}
+public @ToString class EmployeeDTO {
+//    @NotEmpty(message = "Employee name cannot be null")
+    @Pattern(regexp = "^[A-Z]{1}[a-zA-Z\\s]{2,}$", message = "Employee name Invalid")
+    public String name;
 
-    public EmployeeDTO(String name, double salary) {
-        this.name = name;
-        this.salary = salary;
-    }
+    @Min(value = 500, message = "Min wage should be more than 500")
+    public double salary;
 
-    public String getName() {
-        return name;
-    }
-    public double getSalary(){
-        return salary;
-    }
+    @Pattern(regexp = "male|female", message ="Gender needs to be male or female")
+    public String gender;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setSalary(double salary) {
-        this.salary = salary;
-    }
+    @JsonFormat(pattern="dd MMM yyyy")
+    @NotNull(message="startDate should Not be Empty")
+    @PastOrPresent(message = "startDate should be past or today's date")
+    public LocalDate startDate;
 
-    public String toString() {
-        return "name: " + name + ", " + "salary: " + salary;
-    }
+    @NotBlank(message = "Note cannot be empty")
+    public String note;
+
+    @NotBlank(message = "Profile pic cannot be empty")
+    public String profilePic;
+
+    @NotNull(message = "department should not be empty")
+    public List<String> departments;
+
+//    public EmployeeDTO() {}
+//
+//    public EmployeeDTO(String name, double salary) {
+//        this.name = name;
+//        this.salary = salary;
+//    }
+
+//    public String getName() {
+//        return name;
+//    }
+//    public double getSalary(){
+//        return salary;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//    public void setSalary(double salary) {
+//        this.salary = salary;
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return "name = " + name + ", " + "salary = " + salary;
+//    }
 }
